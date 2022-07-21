@@ -1,18 +1,17 @@
 package com.dkharchenko.shop.services;
 
 
-import com.dkharchenko.shop.entities.Cart;
 import com.dkharchenko.shop.entities.Client;
 import com.dkharchenko.shop.entities.Order;
 import com.dkharchenko.shop.entities.Product;
 import com.dkharchenko.shop.exceptions.CartIsEmptyException;
 import com.dkharchenko.shop.exceptions.ClientNotFoundException;
 import com.dkharchenko.shop.exceptions.OrderNotFoundException;
-import com.dkharchenko.shop.exceptions.ProductNotFoundException;
 import com.dkharchenko.shop.repositories.OrderRepository;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,24 +39,28 @@ public class OrderService {
     }
 
     public Integer deleteOrder(Integer clientId) throws ClientNotFoundException {
-        Client client = clientService.findById(clientId);
-        orderRepository.deleteByClient(client);
-        return client.getId();
+        if (clientService.findById(clientId).getId() != clientId) {
+            throw new ClientNotFoundException("Client with ID #" + clientId + " is not found");
+        }
+        orderRepository.deleteByClientId(clientId);
+        return clientId;
     }
 
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
 
-    public Order findByClientId(Integer clientId) throws OrderNotFoundException, ClientNotFoundException {
-        Order order;
-        Client client = clientService.findById(clientId);
-        Optional<Order> optionalOrder = orderRepository.findOrderByClient(client);
-        if(optionalOrder.isPresent()) {
-            order = optionalOrder.get();
-        } else {
-            throw new OrderNotFoundException("Order for client with ID #" + clientId + " is not found");
+    public List<Order> findByClientId(Integer clientId) throws OrderNotFoundException {
+        List<Order> orders = new ArrayList<>();
+        Integer[] orderId = orderRepository.findAllOrderIdByClientId(clientId);
+        for (Integer integer : orderId) {
+            Optional<Order> optionalOrder = orderRepository.findById(integer);
+            optionalOrder.ifPresent(orders::add);
         }
-        return order;
+        if (orders.isEmpty()) {
+            throw new OrderNotFoundException("Order for client with ID #" + clientId + " is not found");
+        } else {
+            return orders;
+        }
     }
 }

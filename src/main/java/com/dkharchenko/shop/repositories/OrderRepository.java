@@ -1,13 +1,16 @@
 package com.dkharchenko.shop.repositories;
 
-import com.dkharchenko.shop.entities.Client;
 import com.dkharchenko.shop.entities.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
+    @Modifying
+    @Query(value = "select * from orders where client_id = ?1", nativeQuery = true)
+    Integer[] findAllOrderIdByClientId(Integer clientId);
 
-    Optional<Order> findOrderByClient(Client client);
-    void deleteByClient(Client client);
+    @Modifying
+    @Query(value = "delete from orders where client_id = ?1", nativeQuery = true)
+    void deleteByClientId(Integer clientId);
 }

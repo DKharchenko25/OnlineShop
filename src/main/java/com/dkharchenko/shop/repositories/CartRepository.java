@@ -1,16 +1,22 @@
 package com.dkharchenko.shop.repositories;
 
 import com.dkharchenko.shop.entities.Cart;
-import com.dkharchenko.shop.entities.Client;
-import com.dkharchenko.shop.entities.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface CartRepository extends JpaRepository<Cart, Integer> {
-    List<Cart> findAllCartByClient(Client client);
+    @Modifying
+    @Query(value = "select * from cart where client_id = ?1", nativeQuery = true)
+    List<Cart> findAllCartByClientId(Integer clientId);
 
-    void deleteAllByClient(Client client);
+    @Modifying
+    @Query(value = "delete from cart where client_id = ?1", nativeQuery = true)
+    void deleteAllByClientId(Integer clientId);
 
-    void deleteByClientAndProduct(Client client, Product product);
+    @Modifying
+    @Query(value = "delete from cart where (client_id = ?1 and product_id = ?2)", nativeQuery = true)
+    void deleteByClientIdAndProductId(Integer clientId, Integer productId);
 }

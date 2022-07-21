@@ -3,6 +3,7 @@ package com.dkharchenko.shop.services;
 import com.dkharchenko.shop.entities.Cart;
 import com.dkharchenko.shop.entities.Client;
 import com.dkharchenko.shop.entities.Product;
+import com.dkharchenko.shop.exceptions.CartIsEmptyException;
 import com.dkharchenko.shop.exceptions.ClientNotFoundException;
 import com.dkharchenko.shop.exceptions.ProductNotFoundException;
 import com.dkharchenko.shop.repositories.CartRepository;
@@ -28,29 +29,32 @@ public class CartService {
         cartRepository.save(new Cart(client, product));
     }
 
-    public List<Product> findAllProductsByClientId(Integer clientId) throws ClientNotFoundException {
-        Client client = clientService.findById(clientId);
-        List<Cart> carts = cartRepository.findAllCartByClient(client);
+    public List<Product> findAllProductsByClientId(Integer clientId) throws CartIsEmptyException {
+        List<Cart> carts = cartRepository.findAllCartByClientId(clientId);
         List<Product> products = new ArrayList<>();
         for (Cart cart : carts) {
             products.add(cart.getProduct());
         }
+        if (products.isEmpty()) {
+            throw new CartIsEmptyException("Cart of client with ID #" + clientId + " is empty");
+        }
         return products;
     }
 
-    public void deleteAllByClientId(Integer clientId) throws ClientNotFoundException {
-        Client client = clientService.findById(clientId);
-        cartRepository.deleteAllByClient(client);
+    public void deleteAllByClientId(Integer clientId) {
+        cartRepository.deleteAllByClientId(clientId);
+
     }
 
-    public Integer deleteFromCart(Integer clientId, Integer productId)
-            throws ClientNotFoundException, ProductNotFoundException {
-        Client client = clientService.findById(clientId);
-        Product product = productService.findById(productId);
-        cartRepository.deleteByClientAndProduct(client, product);
-        return productId;
+    public Integer[] deleteFromCart(Integer clientId, Integer productId) throws ClientNotFoundException, ProductNotFoundException {
+        if (clientService.findById(clientId).getId() != clientId) {
+            throw new ClientNotFoundException("Client with ID #" + clientId + " is not found");
+        }
+        if (productService.findById(productId).getId() != productId) {
+            throw new ProductNotFoundException("Product with ID #" + clientId + " is not found");
+        }
+        cartRepository.deleteByClientIdAndProductId(clientId, productId);
+        return new Integer[]{clientId, productId};
     }
-
-
 }
 

@@ -4,7 +4,6 @@ import com.dkharchenko.shop.entities.Order;
 import com.dkharchenko.shop.exceptions.CartIsEmptyException;
 import com.dkharchenko.shop.exceptions.ClientNotFoundException;
 import com.dkharchenko.shop.exceptions.OrderNotFoundException;
-import com.dkharchenko.shop.exceptions.ProductNotFoundException;
 import com.dkharchenko.shop.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,8 +26,7 @@ public class OrderController {
     }
 
     @GetMapping(value = "/{clientId}")
-    public Order getOrderByClientId(@PathVariable Integer clientId)
-            throws OrderNotFoundException, ClientNotFoundException {
+    public List<Order> getOrderByClientId(@PathVariable Integer clientId) throws OrderNotFoundException {
         return orderService.findByClientId(clientId);
     }
 

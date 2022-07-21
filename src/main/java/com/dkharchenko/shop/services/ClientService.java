@@ -20,8 +20,13 @@ public class ClientService {
         return clientRepository.save(new Client(dto.getName(), dto.getPhoneNumber())).getId();
     }
 
-    public void deleteClientById(Integer id) {
-        clientRepository.deleteById(id);
+    public Integer deleteClientById(Integer id) throws ClientNotFoundException {
+        if (clientRepository.findById(id).isPresent()) {
+            clientRepository.deleteById(id);
+        } else {
+            throw new ClientNotFoundException("Client with ID #" + id + " is not found");
+        }
+        return id;
     }
 
     public Client findById(Integer id) throws ClientNotFoundException {

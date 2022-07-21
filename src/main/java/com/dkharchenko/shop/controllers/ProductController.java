@@ -49,29 +49,11 @@ public class ProductController {
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/update-product")
+    @PutMapping(value = "/update")
     @Transactional
     public ResponseEntity<Integer> updateProductById(@RequestParam Integer id,
                                                      @RequestBody ProductDTO dto) throws ProductNotFoundException {
         productService.updateProductById(id, dto);
-        return new ResponseEntity<>(id, HttpStatus.OK);
-
-    }
-
-    @PutMapping(value = "/update-price")
-    @Transactional
-    public ResponseEntity<Integer> updatePriceById(@RequestParam Integer id,
-                                                   @RequestBody ProductDTO dto) throws ProductNotFoundException {
-        productService.updatePriceById(id, dto);
-        return new ResponseEntity<>(id, HttpStatus.OK);
-
-    }
-
-    @PutMapping(value = "/update-name")
-    @Transactional
-    public ResponseEntity<Integer> updateNameById(@RequestParam Integer id,
-                                                  @RequestBody ProductDTO dto) throws ProductNotFoundException {
-        productService.updateNameById(id, dto);
         return new ResponseEntity<>(id, HttpStatus.OK);
 
     }

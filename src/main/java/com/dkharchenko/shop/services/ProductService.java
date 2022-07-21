@@ -31,7 +31,7 @@ public class ProductService {
     public Product findById(Integer id) throws ProductNotFoundException {
         Product product;
         Optional<Product> optionalProduct = productRepository.findById(id);
-        if(optionalProduct.isPresent()) {
+        if (optionalProduct.isPresent()) {
             product = optionalProduct.get();
         } else {
             throw new ProductNotFoundException("Product with ID #" + id + " is not found");
@@ -40,7 +40,7 @@ public class ProductService {
     }
 
     public Integer addProduct(ProductDTO dto) {
-       return productRepository.save(new Product(dto.getName(), dto.getPrice())).getId();
+        return productRepository.save(new Product(dto.getName(), dto.getPrice())).getId();
     }
 
     public Integer deleteProductById(Integer id) throws ProductNotFoundException {
@@ -51,21 +51,16 @@ public class ProductService {
 
     public Integer updateProductById(Integer id, ProductDTO dto) throws ProductNotFoundException {
         Product product = findById(id);
-        productRepository.updateProductById(dto.getName(), dto.getPrice(), product.getId());
+        if (dto.getName() == null) {
+            productRepository.updatePriceById(dto.getPrice(), id);
+        }
+        if (dto.getPrice() == null) {
+            productRepository.updateNameById(dto.getName(), id);
+        }
+        if (dto.getPrice() != null && dto.getName() != null) {
+            productRepository.updateProductById(dto.getName(), dto.getPrice(), product.getId());
+
+        }
         return product.getId();
     }
-
-    public Integer updatePriceById(Integer id, ProductDTO dto) throws ProductNotFoundException {
-        Product product = findById(id);
-        productRepository.updatePriceById(dto.getPrice(), product.getId());
-        return product.getId();
-    }
-
-    public Integer updateNameById(Integer id, ProductDTO dto) throws ProductNotFoundException {
-        Product product = findById(id);
-        productRepository.updateNameById(dto.getName(), product.getId());
-        return product.getId();
-    }
-
-
 }

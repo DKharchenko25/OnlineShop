@@ -1,6 +1,7 @@
 package com.dkharchenko.shop.controllers;
 
 import com.dkharchenko.shop.entities.Product;
+import com.dkharchenko.shop.exceptions.CartIsEmptyException;
 import com.dkharchenko.shop.exceptions.ClientNotFoundException;
 import com.dkharchenko.shop.exceptions.ProductNotFoundException;
 import com.dkharchenko.shop.services.CartService;
@@ -20,7 +21,7 @@ public class CartController {
     private CartService cartService;
 
     @GetMapping(value = "/client-all")
-    public List<Product> getAllProductsByClientId(@RequestParam Integer clientId) throws ClientNotFoundException {
+    public List<Product> getAllProductsByClientId(@RequestParam Integer clientId) throws CartIsEmptyException {
         return cartService.findAllProductsByClientId(clientId);
     }
 
@@ -33,10 +34,10 @@ public class CartController {
 
     @DeleteMapping(value = "/delete")
     @Transactional
-    public ResponseEntity<Integer> deleteFromCart(@RequestParam Integer clientId, @RequestParam Integer productId)
+    public ResponseEntity<Integer[]> deleteFromCart(@RequestParam Integer clientId, @RequestParam Integer productId)
             throws ClientNotFoundException, ProductNotFoundException {
         cartService.deleteFromCart(clientId, productId);
-        return new ResponseEntity<>(productId, HttpStatus.OK);
+        return new ResponseEntity<>(new Integer[]{clientId, productId}, HttpStatus.OK);
     }
 
 }

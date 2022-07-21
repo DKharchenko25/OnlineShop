@@ -26,7 +26,7 @@ public class ClientController {
 
     @DeleteMapping(value = "/delete")
     @Transactional
-    public ResponseEntity<Integer> deleteClient(@RequestParam Integer id) {
+    public ResponseEntity<Integer> deleteClient(@RequestParam Integer id) throws ClientNotFoundException {
         clientService.deleteClientById(id);
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
