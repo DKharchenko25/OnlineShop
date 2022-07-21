@@ -35,15 +35,7 @@ http://localhost:8080/products/delete?id=id
 ```
 6. Update product by ID (***admin function***, "*id*" - product id):
 ```sh
-http://localhost:8080/products/update-product?id=id
-```
-7. Update product price by ID (***admin function***, "*id*" - product id):
-```sh
-http://localhost:8080/products/update-price?id=id
-```
-8. Update product name by ID (***admin function***, "*id*" - product id):
-```sh
-http://localhost:8080/products/update-name?id=id
+http://localhost:8080/products/update?id=id
 ```
 
 ### Client section
