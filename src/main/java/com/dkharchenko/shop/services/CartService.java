@@ -50,8 +50,8 @@ public class CartService {
         if (clientService.findById(clientId).getId() != clientId) {
             throw new ClientNotFoundException("Client with ID #" + clientId + " is not found");
         }
-        if (productService.findById(productId).getId() != productId) {
-            throw new ProductNotFoundException("Product with ID #" + clientId + " is not found");
+        if (cartRepository.findAllCartByProductId(productId).isEmpty()) {
+            throw new ProductNotFoundException("Product with ID #" + productId + " is not found");
         }
         cartRepository.deleteByClientIdAndProductId(clientId, productId);
         return new Integer[]{clientId, productId};

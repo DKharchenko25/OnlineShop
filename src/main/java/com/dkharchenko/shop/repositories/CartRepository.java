@@ -13,6 +13,10 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
     List<Cart> findAllCartByClientId(Integer clientId);
 
     @Modifying
+    @Query(value = "select * from cart where product_id = ?1", nativeQuery = true)
+    List<Cart> findAllCartByProductId(Integer productId);
+
+    @Modifying
     @Query(value = "delete from cart where client_id = ?1", nativeQuery = true)
     void deleteAllByClientId(Integer clientId);
 
